@@ -31,7 +31,7 @@ jobs:
 
       - name: Create image
         run: |
-          docker build -f containers/${{matrix.container}}/${{matrix.version}} -t ${{matrix.container}}:${{matrix.version}} .
+          docker build -f containers/${{matrix.container}}/${{matrix.version}}/Dockerfile -t ${{matrix.container}}:${{matrix.version}} .
 
       - name: Login to github container repository
         if: ${{github.head_ref == ''}} # only for non-PRs

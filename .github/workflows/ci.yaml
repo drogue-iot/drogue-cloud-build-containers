@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+
+  prepare:
+    runs-on: ubuntu-20.04
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Generate Matrix
+        id: set-matrix
+        run: .github/scripts/gen-matrix
+
+  build:
+    runs-on: ubuntu-20.04
+    needs: prepare
+    name: Build (${{matrix.container}}/${{matrix.version}})
+
+    strategy:
+      matrix: ${{fromJson(needs.prepare.outputs.matrix)}}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create image
+        run: |
+          docker build -f containers/${{matrix.container}}/${{matrix.version}} -t ${{matrix.container}}:${{matrix.version}} .
+
+      - name: Login to github container repository
+        if: ${{github.head_ref == ''}} # only for non-PRs
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push image to github container repository
+        if: ${{github.head_ref == ''}} # only for non-PRs
+        run: |
+          docker tag ${{matrix.container}}:${{matrix.version}} ghcr.io/${{matrix.container}}:${{matrix.version}}
+#          docker push ghcr.io/${{matrix.container}}:${{matrix.version}}

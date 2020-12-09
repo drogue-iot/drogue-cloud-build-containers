@@ -42,5 +42,5 @@ jobs:
       - name: Push image to github container repository
         if: ${{github.head_ref == ''}} # only for non-PRs
         run: |
-          docker tag ${{matrix.container}}:${{matrix.version}} ghcr.io/${{matrix.container}}:${{matrix.version}}
-          docker push ghcr.io/${{matrix.container}}:${{matrix.version}}
+          docker tag ${{matrix.container}}:${{matrix.version}} ghcr.io/${{ github.repository_owner }}/${{matrix.container}}:${{matrix.version}}
+          docker push ghcr.io/${{ github.repository_owner }}/${{matrix.container}}:${{matrix.version}}

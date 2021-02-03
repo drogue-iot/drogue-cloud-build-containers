@@ -5,12 +5,13 @@ FROM registry.access.redhat.com/ubi8/ubi:latest
 LABEL org.opencontainers.image.source="https://github.com/drogue-iot/drogue-cloud-build-containers"
 
 RUN dnf -y update
-RUN dnf -y install curl openssl-devel npm gcc gcc-c++ make cyrus-sasl-devel cmake libpq-devel
+RUN dnf -y install curl openssl openssl-devel npm gcc gcc-c++ make cyrus-sasl-devel cmake libpq-devel
 
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain none
 
 ENV PATH "$PATH:/root/.cargo/bin"
 
+RUN rustup toolchain install 1.49
 RUN rustup target add wasm32-unknown-unknown
 
 RUN \
@@ -37,3 +38,8 @@ RUN mkdir -p /usr/src
 VOLUME /usr/src/
 
 ENV CARGO_HOME "/usr/src/.cargo-container-home"
+
+RUN dnf install -y https://download.docker.com/linux/centos/8/x86_64/stable/Packages/docker-ce-cli-20.10.2-3.el8.x86_64.rpm
+
+RUN dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+RUN dnf install -y postgresql12

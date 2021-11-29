@@ -8,9 +8,12 @@ RUN dnf -y update
 RUN dnf -y module install nodejs:16
 RUN dnf -y install curl openssl openssl-devel gcc gcc-c++ make cyrus-sasl-devel cmake libpq-devel perl
 
+ENV RUSTUP_HOME=/opt/rust
+ENV CARGO_HOME=/opt/rust
+
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain none
 
-ENV PATH "$PATH:/root/.cargo/bin"
+ENV PATH "$PATH:$CARGO_HOME/bin"
 
 # This needs to be aligned with the rust-toolchain.toml file in drogue-iot/drogue-cloud
 RUN rustup toolchain install 1.56.1
@@ -40,7 +43,7 @@ RUN \
 # This is used by the wasm-pack-plugin for webpack
 ENV WASM_PACK_PATH "/usr/local/bin/wasm-pack"
 
-RUN mkdir -p /usr/src
+RUN install -m 0777 -d /usr/src
 VOLUME /usr/src/
 
 ENV CARGO_HOME "/usr/src/.cargo-container-home"

@@ -8,6 +8,9 @@ RUN dnf -y update
 RUN dnf -y module install nodejs:16
 RUN dnf -y install curl openssl openssl-devel gcc gcc-c++ make cyrus-sasl-devel cmake libpq-devel perl
 
+ENV npm_config_cache=/opt/npm
+RUN mkdir /opt/npm && chmod a+rwx /opt/npm
+
 ENV RUSTUP_HOME=/opt/rust
 ENV CARGO_HOME=/opt/rust
 

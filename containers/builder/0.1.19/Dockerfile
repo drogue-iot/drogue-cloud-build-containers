@@ -19,26 +19,26 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain none
 ENV PATH "$PATH:$CARGO_HOME/bin"
 
 # This needs to be aligned with the rust-toolchain.toml file in drogue-iot/drogue-cloud
-RUN rustup toolchain install 1.57.0
+RUN rustup toolchain install 1.58.0
 RUN rustup target add wasm32-unknown-unknown
 RUN rustup target add x86_64-apple-darwin
 RUN rustup target add x86_64-pc-windows-msvc
 RUN rustup component add rust-src
 
 RUN \
-     curl -sSL https://github.com/rustwasm/wasm-pack/releases/download/v0.10.1/wasm-pack-v0.10.1-x86_64-unknown-linux-musl.tar.gz -o wasm-pack.tar.gz \
+     curl -sSL https://github.com/rustwasm/wasm-pack/releases/download/v0.10.2/wasm-pack-v0.10.2-x86_64-unknown-linux-musl.tar.gz -o wasm-pack.tar.gz \
   && tar --strip-components=1 -xvzf wasm-pack.tar.gz '*/wasm-pack' \
   && rm wasm-pack.tar.gz \
   && cp wasm-pack /usr/local/bin/ && rm wasm-pack
 
 RUN \
-     curl -sSL https://github.com/rustwasm/wasm-bindgen/releases/download/0.2.78/wasm-bindgen-0.2.78-x86_64-unknown-linux-musl.tar.gz -o wasm-bindgen.tar.gz \
+     curl -sSL https://github.com/rustwasm/wasm-bindgen/releases/download/0.2.79/wasm-bindgen-0.2.79-x86_64-unknown-linux-musl.tar.gz -o wasm-bindgen.tar.gz \
   && tar --strip-components=1 -xvzf wasm-bindgen.tar.gz '*/wasm-bindgen' \
   && rm wasm-bindgen.tar.gz \
   && cp wasm-bindgen /usr/local/bin/ && rm wasm-bindgen
 
 RUN \
-    curl -sSL https://github.com/WebAssembly/binaryen/releases/download/version_97/binaryen-version_97-x86_64-linux.tar.gz -o binaryen.tar.gz \
+    curl -sSL https://github.com/WebAssembly/binaryen/releases/download/version_105/binaryen-version_105-x86_64-linux.tar.gz -o binaryen.tar.gz \
  && tar --strip-components=2 -xzvf binaryen.tar.gz '*/wasm-opt' \
  && rm binaryen.tar.gz \
  && cp wasm-opt /usr/local/bin/ && rm wasm-opt

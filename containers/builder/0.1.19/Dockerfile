@@ -38,10 +38,16 @@ RUN \
   && cp wasm-bindgen /usr/local/bin/ && rm wasm-bindgen
 
 RUN \
-    curl -sSL https://github.com/WebAssembly/binaryen/releases/download/version_105/binaryen-version_105-x86_64-linux.tar.gz -o binaryen.tar.gz \
- && tar --strip-components=2 -xzvf binaryen.tar.gz '*/wasm-opt' \
- && rm binaryen.tar.gz \
- && cp wasm-opt /usr/local/bin/ && rm wasm-opt
+     curl -sSL https://github.com/WebAssembly/binaryen/releases/download/version_105/binaryen-version_105-x86_64-linux.tar.gz -o binaryen.tar.gz \
+  && tar --strip-components=2 -xzvf binaryen.tar.gz '*/wasm-opt' \
+  && rm binaryen.tar.gz \
+  && cp wasm-opt /usr/local/bin/ && rm wasm-opt
+
+RUN \
+     curl -sSL https://github.com/sass/dart-sass/releases/download/1.37.5/dart-sass-1.37.5-linux-x64.tar.gz -o dart-sass.tar.gz \
+  && tar --strip-components=1 -xzvf dart-sass.tar.gz '*/sass' \
+  && rm dart-sass.tar.gz \
+  && cp sass /usr/local/bin/ && rm sass
 
 # We can't download the binary, as we face an issue with: GLIBC_2.29
 RUN cargo install trunk --version "^0.14.0" && rm -Rf ~/.cargo

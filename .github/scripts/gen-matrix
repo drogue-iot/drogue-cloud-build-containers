@@ -3,7 +3,6 @@
 import os
 import json
 
-
 # 'splitall' comes from: https://www.oreilly.com/library/view/python-cookbook/0596001673/ch04s16.html
 def splitall(path):
     allparts = []
@@ -30,6 +29,9 @@ for root, _, files in os.walk("containers"):
             includes.append({
                 "container": dirs[1],
                 "version": dirs[2],
+                "skip": {
+                    "aarch64": os.path.isfile(root + "/skip.aarch64")
+                },
             })
 
 matrix = {

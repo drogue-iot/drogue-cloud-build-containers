@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.source="https://github.com/drogue-iot/drogue-clou
 
 RUN dnf -y update
 RUN dnf -y module install nodejs:16
-RUN dnf -y install curl openssl openssl-devel gcc gcc-c++ make cyrus-sasl-devel cmake libpq-devel perl
+RUN dnf -y install curl openssl openssl-devel gcc gcc-c++ make cyrus-sasl-devel cmake libpq-devel perl xz
 
 ENV npm_config_cache=/opt/npm
 RUN mkdir /opt/npm && chmod a+rwx /opt/npm
@@ -25,32 +25,38 @@ RUN rustup target add x86_64-apple-darwin
 RUN rustup target add x86_64-pc-windows-msvc
 RUN rustup component add rust-src
 
-RUN \
-     curl -sSL https://github.com/rustwasm/wasm-pack/releases/download/v0.10.2/wasm-pack-v0.10.2-x86_64-unknown-linux-musl.tar.gz -o wasm-pack.tar.gz \
-  && tar --strip-components=1 -xvzf wasm-pack.tar.gz '*/wasm-pack' \
-  && rm wasm-pack.tar.gz \
-  && cp wasm-pack /usr/local/bin/ && rm wasm-pack
+RUN true \
+    && curl -sSL https://github.com/rustwasm/wasm-pack/releases/download/v0.10.2/wasm-pack-v0.10.2-$(uname -p)-unknown-linux-musl.tar.gz -o wasm-pack.tar.gz \
+    && tar --strip-components=1 -xvzf wasm-pack.tar.gz '*/wasm-pack' \
+    && rm wasm-pack.tar.gz \
+    && cp wasm-pack /usr/local/bin/ && rm wasm-pack
+
+RUN true \
+    && curl -sSL https://raw.githubusercontent.com/drogue-iot/drogue-cloud-build-tools/main/binaries/$(uname -p)/wasm-bindgen/0.2.79/wasm-bindgen.xz -o wasm-bindgen.xz \
+    && unxz wasm-bindgen.xz \
+    && install -m 0555 wasm-bindgen /usr/local/bin/ \
+    && rm wasm-bindgen
 
 RUN \
-     curl -sSL https://github.com/rustwasm/wasm-bindgen/releases/download/0.2.79/wasm-bindgen-0.2.79-x86_64-unknown-linux-musl.tar.gz -o wasm-bindgen.tar.gz \
-  && tar --strip-components=1 -xvzf wasm-bindgen.tar.gz '*/wasm-bindgen' \
-  && rm wasm-bindgen.tar.gz \
-  && cp wasm-bindgen /usr/local/bin/ && rm wasm-bindgen
+    case "$(uname -p)" in \
+        aarch64) \
+            ;; \
+        *) \
+               curl -sSL https://github.com/WebAssembly/binaryen/releases/download/version_105/binaryen-version_105-x86_64-linux.tar.gz -o binaryen.tar.gz \
+            && tar --strip-components=2 -xzvf binaryen.tar.gz '*/wasm-opt' \
+            && rm binaryen.tar.gz \
+            && cp wasm-opt /usr/local/bin/ && rm wasm-opt \
+            ;; \
+    esac
 
-RUN \
-     curl -sSL https://github.com/WebAssembly/binaryen/releases/download/version_105/binaryen-version_105-x86_64-linux.tar.gz -o binaryen.tar.gz \
-  && tar --strip-components=2 -xzvf binaryen.tar.gz '*/wasm-opt' \
-  && rm binaryen.tar.gz \
-  && cp wasm-opt /usr/local/bin/ && rm wasm-opt
+RUN npm install -g sass
 
-RUN \
-     curl -sSL https://github.com/sass/dart-sass/releases/download/1.37.5/dart-sass-1.37.5-linux-x64.tar.gz -o dart-sass.tar.gz \
-  && tar --strip-components=1 -xzvf dart-sass.tar.gz '*/sass' \
-  && rm dart-sass.tar.gz \
-  && cp sass /usr/local/bin/ && rm sass
-
-# We can't download the binary, as we face an issue with: GLIBC_2.29
-RUN cargo install trunk --version "^0.14.0" && rm -Rf ~/.cargo
+# We use our own binary due to aarch64 and an issue with GLIBC_2.29
+RUN true \
+    && curl -sSL https://raw.githubusercontent.com/drogue-iot/drogue-cloud-build-tools/main/binaries/$(uname -p)/trunk/0.14.0/trunk.xz -o trunk.xz \
+    && unxz trunk.xz \
+    && install -m 0555 trunk /usr/local/bin/ \
+    && rm trunk
 ENV XDG_CACHE_HOME=/cache
 RUN install -m0777 -d $XDG_CACHE_HOME
 
@@ -62,7 +68,7 @@ VOLUME /usr/src/
 
 ENV CARGO_HOME "/usr/src/.cargo-container-home"
 
-RUN dnf install -y https://download.docker.com/linux/centos/8/x86_64/stable/Packages/docker-ce-cli-20.10.2-3.el8.x86_64.rpm
+RUN dnf install -y https://download.docker.com/linux/centos/8/$(uname -p)/stable/Packages/docker-ce-cli-20.10.2-3.el8.$(uname -p).rpm
 
-RUN dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-RUN dnf install -y postgresql14
+RUN dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-$(uname -p)/pgdg-redhat-repo-latest.noarch.rpm
+RUN \[ "$(uname -p)" == "aarch64" ] && OPTS="--nogpgcheck"; dnf install -y $OPTS postgresql14

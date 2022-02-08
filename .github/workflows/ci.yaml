@@ -77,5 +77,6 @@ jobs:
       - name: Tag and Push
         if: ${{github.head_ref == ''}} # only for non-PRs
         run: |
-          echo "Platforms: ${{ env.platforms }}"
-          docker buildx build . -f containers/${{matrix.container}}/${{matrix.version}}/Dockerfile --push --platform ${{ env.platforms }} --tag $IMAGE_ID:$VERSION
+          PLATFORMS=$(echo "${{ env.platforms }}" | sed 's/,$//') 
+          echo "Platforms: $PLATFORMS"
+          docker buildx build . -f containers/${{matrix.container}}/${{matrix.version}}/Dockerfile --push --platform $PLATFORMS --tag $IMAGE_ID:$VERSION

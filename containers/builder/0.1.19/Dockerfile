@@ -8,9 +8,6 @@ RUN dnf -y update
 RUN dnf -y module install nodejs:16
 RUN dnf -y install curl openssl openssl-devel gcc gcc-c++ make cyrus-sasl-devel cmake libpq-devel perl xz
 
-ENV npm_config_cache=/opt/npm
-RUN mkdir /opt/npm && chmod a+rwx /opt/npm
-
 ENV RUSTUP_HOME=/opt/rust
 ENV CARGO_HOME=/opt/rust
 
@@ -59,6 +56,10 @@ RUN true \
     && rm trunk
 ENV XDG_CACHE_HOME=/cache
 RUN install -m0777 -d $XDG_CACHE_HOME
+
+# Set the cache directory after installing tools using npm, and make it accessible
+ENV npm_config_cache=/opt/npm
+RUN mkdir $npm_config_cache && chmod a+rwx $npm_config_cache
 
 # This is used by the wasm-pack-plugin for webpack
 ENV WASM_PACK_PATH "/usr/local/bin/wasm-pack"

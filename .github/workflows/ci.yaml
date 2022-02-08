@@ -67,12 +67,14 @@ jobs:
         if: ${{!matrix.skip.aarch64}}
         run: |
           docker buildx build . -f containers/${{matrix.container}}/${{matrix.version}}/Dockerfile --platform linux/arm64 --tag $IMAGE_ID:$VERSION
+          echo "platforms={{ $env.platforms }}linux/arm64," >> $GITHUB_ENV
 
       - name: Build (linux/amd64)
         run: |
           docker buildx build . -f containers/${{matrix.container}}/${{matrix.version}}/Dockerfile --platform linux/amd64 --tag $IMAGE_ID:$VERSION
+          echo "platforms={{ $env.platforms }}linux/amd64," >> $GITHUB_ENV
 
       - name: Tag and Push
         if: ${{github.head_ref == ''}} # only for non-PRs
         run: |
-          docker buildx build . -f containers/${{matrix.container}}/${{matrix.version}}/Dockerfile --push --platform linux/amd64,linux/arm64 --tag $IMAGE_ID:$VERSION
+          docker buildx build . -f containers/${{matrix.container}}/${{matrix.version}}/Dockerfile --push --platform {{ $env.platforms }} --tag $IMAGE_ID:$VERSION

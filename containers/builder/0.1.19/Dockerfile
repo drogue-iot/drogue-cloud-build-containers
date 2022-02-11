@@ -17,6 +17,7 @@ ENV PATH "$PATH:$CARGO_HOME/bin"
 
 # This needs to be aligned with the rust-toolchain.toml file in drogue-iot/drogue-cloud
 RUN rustup toolchain install 1.58.0
+RUN rustup default 1.58.0
 RUN rustup target add wasm32-unknown-unknown
 RUN rustup target add x86_64-apple-darwin
 RUN rustup target add x86_64-pc-windows-msvc

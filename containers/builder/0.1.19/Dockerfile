@@ -48,7 +48,7 @@ RUN \
             ;; \
     esac
 
-RUN npm install -g sass
+RUN npm install -g sass@1.49.7
 
 # We use our own binary due to aarch64 and an issue with GLIBC_2.29
 RUN true \

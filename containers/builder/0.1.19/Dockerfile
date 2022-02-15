@@ -24,6 +24,7 @@ RUN rustup target add x86_64-apple-darwin
 RUN rustup target add x86_64-pc-windows-msvc
 RUN rustup component add rust-src
 
+# The following tools need to be aligned with the console-frontend/Trunk.toml file
 RUN true \
     && curl -sSL https://github.com/rustwasm/wasm-pack/releases/download/v0.10.2/wasm-pack-v0.10.2-$(uname -p)-unknown-linux-musl.tar.gz -o wasm-pack.tar.gz \
     && tar --strip-components=1 -xvzf wasm-pack.tar.gz '*/wasm-pack' \

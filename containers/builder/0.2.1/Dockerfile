@@ -5,8 +5,8 @@ FROM registry.access.redhat.com/ubi9/ubi:latest
 LABEL org.opencontainers.image.source="https://github.com/drogue-iot/drogue-cloud-build-containers"
 
 RUN dnf -y update
+RUN dnf -y install curl-minimal openssl openssl-devel gcc gcc-c++ make cyrus-sasl-devel cmake libpq-devel perl xz postgresql
 RUN dnf -y install nodejs
-RUN dnf -y install curl-minimal openssl openssl-devel gcc gcc-c++ make cyrus-sasl-devel cmake libpq-devel perl xz
 
 ENV RUSTUP_HOME=/opt/rust
 ENV CARGO_HOME=/opt/rust

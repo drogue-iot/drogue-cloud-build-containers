@@ -16,7 +16,7 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain none
 ENV PATH "$PATH:$CARGO_HOME/bin"
 
 # This needs to be aligned with the rust-toolchain.toml file in drogue-iot/drogue-cloud
-RUN rustup toolchain install 1.61.0
+RUN rustup toolchain install 1.62.0
 RUN rustup target add wasm32-unknown-unknown
 RUN rustup target add x86_64-unknown-linux-gnu
 RUN rustup target add aarch64-unknown-linux-gnu

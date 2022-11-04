@@ -12,17 +12,17 @@ on:
 jobs:
 
   prepare:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Generate Matrix
         id: set-matrix
         run: .github/scripts/gen-matrix
 
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: prepare
     name: Build (${{matrix.container}}/${{matrix.version}})
 
@@ -30,14 +30,14 @@ jobs:
       matrix: ${{fromJson(needs.prepare.outputs.matrix)}}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}

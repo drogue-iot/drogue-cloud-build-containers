@@ -3,6 +3,7 @@
 import os
 import json
 
+
 # 'splitall' comes from: https://www.oreilly.com/library/view/python-cookbook/0596001673/ch04s16.html
 def splitall(path):
     allparts = []
@@ -11,7 +12,7 @@ def splitall(path):
         if parts[0] == path:  # sentinel for absolute paths
             allparts.insert(0, parts[0])
             break
-        elif parts[1] == path: # sentinel for relative paths
+        elif parts[1] == path:  # sentinel for relative paths
             allparts.insert(0, parts[1])
             break
         else:
@@ -39,4 +40,4 @@ matrix = {
 }
 
 matrix = json.dumps(matrix)
-print(f'::set-output name=matrix::{matrix}')
+print(f'matrix={matrix}')
